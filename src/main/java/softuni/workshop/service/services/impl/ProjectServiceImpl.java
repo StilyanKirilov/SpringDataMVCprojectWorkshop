@@ -5,12 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import softuni.workshop.data.dto.ProjectRootDto;
-import softuni.workshop.data.entities.Company;
 import softuni.workshop.data.entities.Project;
 import softuni.workshop.data.repositories.CompanyRepository;
 import softuni.workshop.data.repositories.ProjectRepository;
 import softuni.workshop.service.services.ProjectService;
 import softuni.workshop.util.XmlParser;
+import softuni.workshop.web.models.ProjectViewModel;
 
 import javax.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static softuni.workshop.constants.GlobalConstants.PROJECTS_FILE_PATH;
 
@@ -66,7 +67,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public String exportFinishedProjects() {
-        List<Project> projects = this.projectRepository.findAllByIsFinishedIsTrue();
+
+        List<ProjectViewModel> projects = this.findAllFinishedProjects();
+
 
         StringBuilder sb = new StringBuilder();
 
@@ -75,5 +78,13 @@ public class ProjectServiceImpl implements ProjectService {
                         p.getName(), p.getDescription(), p.getPayment())));
 
         return sb.toString().trim();
+    }
+
+    private List<ProjectViewModel> findAllFinishedProjects() {
+        return this.projectRepository.findAllByIsFinishedIsTrue()
+                .stream()
+                .map(p -> this.modelMapper.map(p, ProjectViewModel.class))
+                .collect(Collectors.toList());
+
     }
 }

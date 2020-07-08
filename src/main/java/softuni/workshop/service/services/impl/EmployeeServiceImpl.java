@@ -13,6 +13,7 @@ import softuni.workshop.data.repositories.EmployeeRepository;
 import softuni.workshop.data.repositories.ProjectRepository;
 import softuni.workshop.service.services.EmployeeService;
 import softuni.workshop.util.XmlParser;
+import softuni.workshop.web.models.EmployeeViewModel;
 
 import javax.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static softuni.workshop.constants.GlobalConstants.EMPLOYEES_FILE_PATH;
 
@@ -66,14 +68,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public String exportEmployeesWithAgeAbove() {
-        List<Employee> employees = this.employeeRepository.findAllByAgeGreaterThan(25);
+
+        List<EmployeeViewModel> employees = this.findEmployeesWithAgeAbove25();
 
         StringBuilder sb = new StringBuilder();
 
         employees
                 .forEach(e -> sb.append(String.format("Name: %s %s%n   Age: %d%n   Project name: %s%n",
-                        e.getFirstName(), e.getLastName(), e.getAge(), e.getProject().getName())));
+                        e.getFirstName(), e.getLastName(), e.getAge(), e.getProjectName())));
 
         return sb.toString().trim();
+    }
+
+    private List<EmployeeViewModel> findEmployeesWithAgeAbove25() {
+        return this.employeeRepository.findAllByAgeGreaterThan(25)
+                .stream()
+                .map(e -> this.modelMapper.map(e, EmployeeViewModel.class))
+                .collect(Collectors.toList());
     }
 }
