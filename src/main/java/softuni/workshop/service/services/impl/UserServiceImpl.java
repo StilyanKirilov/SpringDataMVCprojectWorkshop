@@ -6,8 +6,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import softuni.workshop.data.entities.Role;
 import softuni.workshop.data.entities.User;
+import softuni.workshop.data.repositories.RoleRepository;
 import softuni.workshop.data.repositories.UserRepository;
 import softuni.workshop.service.models.UserServiceModel;
 import softuni.workshop.service.services.RoleService;
@@ -19,16 +21,19 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
     private final RoleService roleService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, RoleService roleService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, ModelMapper modelMapper, RoleService roleService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.modelMapper = modelMapper;
         this.roleService = roleService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -49,7 +54,7 @@ public class UserServiceImpl implements UserService {
         } else {
             user.setAuthorities(new LinkedHashSet<>());
             user.getAuthorities()
-                    .add(this.modelMapper.map(this.roleService.findByAuthority("USER"), Role.class));
+                    .add(this.roleRepository.findByAuthority("USER"));
         }
 
         user.setPassword(this.bCryptPasswordEncoder.encode(userRegisterModel.getPassword()));

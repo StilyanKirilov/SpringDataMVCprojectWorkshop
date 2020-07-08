@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import softuni.workshop.data.entities.Company;
 
 @Repository
-public interface CompanyRepository extends JpaRepository<Company,Long> {
-    //TODO
+public interface CompanyRepository extends JpaRepository<Company, Long> {
+    Company findByName(String name);
 }

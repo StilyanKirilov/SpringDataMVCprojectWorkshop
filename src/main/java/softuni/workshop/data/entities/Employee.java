@@ -1,13 +1,10 @@
 package softuni.workshop.data.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "employees")
-public class Employee extends BaseEntity{
+public class Employee extends BaseEntity {
 
     private String firstName;
     private String lastName;
@@ -18,7 +15,7 @@ public class Employee extends BaseEntity{
     public Employee() {
     }
 
-    @Column(name = "first_name",nullable = false)
+    @Column(name = "first_name", nullable = false)
     public String getFirstName() {
         return firstName;
     }
@@ -26,7 +23,8 @@ public class Employee extends BaseEntity{
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-    @Column(name = "last_name",nullable = false)
+
+    @Column(name = "last_name", nullable = false)
     public String getLastName() {
         return lastName;
     }
@@ -34,6 +32,7 @@ public class Employee extends BaseEntity{
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
     @Column(nullable = false)
     public Integer getAge() {
         return age;
@@ -43,7 +42,7 @@ public class Employee extends BaseEntity{
         this.age = age;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     public Project getProject() {
         return project;
     }

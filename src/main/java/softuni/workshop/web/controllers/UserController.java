@@ -23,22 +23,22 @@ public class UserController extends BaseController {
 
     @GetMapping("/register")
     public ModelAndView register() {
-        return this.view("user/register");
+        return super.view("user/register");
     }
 
     @PostMapping("/register")
     public ModelAndView registerConfirm(@ModelAttribute UserRegisterModel userRegisterModel) {
 
         if (!userRegisterModel.getPassword().equals(userRegisterModel.getConfirmPassword())) {
-            return this.redirect("/users/register");
+            return super.redirect("/users/register");
         }
 
         this.userService.registerUser(userRegisterModel);
-        return this.redirect("/login");
+        return super.redirect("/users/login");
     }
 
     @GetMapping("/login")
     public ModelAndView login() {
-        return this.view("user/login");
+        return super.view("user/login");
     }
 }
